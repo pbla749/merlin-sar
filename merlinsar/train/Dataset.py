@@ -8,9 +8,6 @@ class Dataset(torch.utils.data.Dataset):
     'characterizes a dataset for pytorch'
     def __init__(self, patche):
         self.patches = patche
-      
-        # self.patches_MR = patches_MR
-        # self.patches_CT = patches_CT
 
     def __len__(self):
         'denotes the total number of samples'
@@ -35,9 +32,6 @@ class ValDataset(torch.utils.data.Dataset):
     'characterizes a dataset for pytorch'
     def __init__(self, test_set):
         self.files = glob(test_set+'/*.npy')
-      
-        # self.patches_MR = patches_MR
-        # self.patches_CT = patches_CT
 
     def __len__(self):
         'denotes the total number of samples'

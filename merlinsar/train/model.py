@@ -59,26 +59,18 @@ import numpy as np
 
 
 
-class AE(torch.nn.Module):
+class Model(torch.nn.Module):
 
-    def __init__(self,batch_size,eval_batch_size,device):
+    def __init__(self,height,width,batch_size,eval_batch_size,device):
         super().__init__()
 
         self.batch_size=batch_size
         self.eval_batch_size=eval_batch_size
         self.device=device
 
-        self.x = None
-        self.height = None
-        self.width = None
-        self.out_channels = None
-        self.kernel_size_cv2d = None
-        self.stride_cv2d = None
-        self.padding_cv2d = None
-        self.kernel_size_mp2d = None
-        self.stride_mp2d = None
-        self.padding_mp2d = None
-        self.alpha = None
+        self.height = height
+        self.width = width
+
         self.pool = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         self.leaky = torch.nn.LeakyReLU(0.1)
 

@@ -1,3 +1,5 @@
+
+   
 #!/usr/bin/env python
 
 """The setup script."""
@@ -21,7 +23,7 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: CeCILL-B License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
@@ -35,15 +37,15 @@ setup(
         ],
     },
     install_requires=requirements,
-    license="MIT license",
+    license="CeCILL-B  license",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='merlin',
-    name='merlin',
-    packages=find_packages(include=['merlin', 'merlin.*']),
+    keywords='merlinsar',
+    name='merlinsar',
+    packages=find_packages(include=['merlinsar', 'merlinsar.*']),
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/audreyr/merlin',
+    # url='https://github.com/audreyr/merlin',
     version='0.1.0',
     zip_safe=False,
 )

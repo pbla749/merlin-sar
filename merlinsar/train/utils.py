@@ -176,8 +176,6 @@ def load_sar_images(filelist):
 
 
 
-
-
 def store_data_and_plot(im, threshold, filename):
     im = np.clip(im, 0, threshold)
     im = im / threshold * 255
@@ -198,14 +196,20 @@ def save_sar_images(denoised, noisy, imagename, save_dir, groundtruth=None):
 
     if groundtruth:
         groundtruthfilename = save_dir+"/groundtruth_"+imagename
+        groundtruthfilename=groundtruthfilename.replace("\\","")
+
         np.save(groundtruthfilename,groundtruth)
         store_data_and_plot(groundtruth, threshold, groundtruthfilename)
 
     denoisedfilename = save_dir + "/denoised_" + imagename
+    denoisedfilename=denoisedfilename.replace("\\","")
+
     np.save(denoisedfilename, denoised)
     store_data_and_plot(denoised, threshold, denoisedfilename)
 
     noisyfilename = save_dir + "/noisy_" + imagename
+    noisyfilename=noisyfilename.replace("\\","")
+
     np.save(noisyfilename, noisy)
     store_data_and_plot(noisy, threshold, noisyfilename)
 
@@ -222,10 +226,14 @@ def save_real_imag_images(real_part, imag_part, imagename, save_dir):
     if threshold is None: threshold = np.mean(imag_part) + 3 * np.std(imag_part)
 
     realfilename = save_dir + "/denoised_real_" + imagename
+    realfilename=realfilename.replace("\\","")
+
     np.save(realfilename, real_part)
     store_data_and_plot(real_part, threshold, realfilename)
 
     imagfilename = save_dir + "/denoised_imag_" + imagename
+    imagfilename=imagfilename.replace("\\","")
+
     np.save(imagfilename, imag_part)
     store_data_and_plot(imag_part, threshold, imagfilename)
 
@@ -241,10 +249,14 @@ def save_real_imag_images_noisy(real_part, imag_part, imagename, save_dir):
     if threshold is None: threshold = np.mean(np.abs(imag_part)) + 3 * np.std(np.abs(imag_part))
 
     realfilename = save_dir + "/noisy_real_" + imagename
+    realfilename=realfilename.replace("\\","")
+
     np.save(realfilename, real_part)
     store_data_and_plot(np.sqrt(2)*np.abs(real_part), threshold, realfilename)
 
     imagfilename = save_dir + "/noisy_imag_" + imagename
+    imagfilename=imagfilename.replace("\\","")
+    
     np.save(imagfilename, imag_part)
     store_data_and_plot(np.sqrt(2)*np.abs(imag_part), threshold, imagfilename)
 

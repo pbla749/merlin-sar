@@ -3,7 +3,6 @@ import torch
 from merlinsar.test.model import *
 from merlinsar.test.utils import *
 from merlinsar.test.model_test import * 
-import argparse
 import os
 from glob import glob
 
@@ -16,7 +15,7 @@ m = -1.429329123112601
 
 
 def despeckle(image_path,destination_directory,stride_size=64,
-                model_weights_path="merlin-sar/merlin/test/saved_model/model.pth"):
+                model_weights_path="merlin-sar/merlin/test/saved_model/model.pth",patch_size=256,height=256,width=256):
     """ Description
             ----------
             Runs a test instance by calling the test function defined in model.py on a few samples
@@ -29,7 +28,7 @@ def despeckle(image_path,destination_directory,stride_size=64,
             ----------
 
     """
-    model = AE(12,1,torch.device("cuda:0" if torch.cuda.is_available() else "cpu"))
+
     denoiser=Denoiser()
 
     if not os.path.exists(destination_directory+'/processed_image'):
@@ -38,7 +37,7 @@ def despeckle(image_path,destination_directory,stride_size=64,
     test_data=destination_directory+'/processed_image'
     image_data = cos2mat(image_path) 
 
-    np.save(test_data+'/test_image_data.npy',image_data[1200:1200+256,:256,:])
+    np.save(test_data+'/test_image_data.npy',image_data)
 
     print(
         "[*] Start testing on real data. Working directory: %s. Collecting data from %s and storing test results in %s" % (
@@ -46,12 +45,13 @@ def despeckle(image_path,destination_directory,stride_size=64,
             
     test_files = glob((test_data + '/*.npy'))
     print(test_files)
-    denoiser.test(model,test_files,model_weights_path, save_dir=destination_directory, dataset_dir=destination_directory,
-                  stride=stride_size)
+
+    denoiser.test(test_files,model_weights_path, save_dir=destination_directory, dataset_dir=destination_directory,
+                  stride=stride_size,patch_size=patch_size,height=height,width=width)
         
 
-def despeckle_from_crop(image_path,destination_directory,stride_size=64,
-                model_weights_path="merlin-sar/merlin/test/saved_model/model.pth"):
+def despeckle_from_coordinates(image_path,coordinates_dict,destination_directory,stride_size=64,
+                model_weights_path="merlin-sar/merlin/test/saved_model/model.pth",patch_size=256,height=256,width=256):
     """ Description
             ----------
             Runs a test instance by calling the test function defined in model.py on a few samples
@@ -64,7 +64,53 @@ def despeckle_from_crop(image_path,destination_directory,stride_size=64,
             ----------
 
     """
-    model = AE(12,1,torch.device("cuda:0" if torch.cuda.is_available() else "cpu"))
+
+    x_start=coordinates_dict["x_start"]
+    x_end=coordinates_dict["x_end"]
+    y_start=coordinates_dict["y_start"]
+    y_end=coordinates_dict["y_end"]
+
+    denoiser=Denoiser()
+
+    if not os.path.exists(destination_directory+'/processed_image'):
+        os.mkdir(destination_directory+'/processed_image')
+    
+    test_data=destination_directory+'/processed_image'
+ 
+    filelist = glob(os.path.join(test_data, "*"))
+    for f in filelist:
+        os.remove(f)
+
+    image_data = cos2mat(image_path) 
+
+    np.save(test_data+'/test_image_data.npy',image_data[x_start:x_end,y_start:y_end,:])
+
+    print(
+        "[*] Start testing on real data. Working directory: %s. Collecting data from %s and storing test results in %s" % (
+            os.getcwd(), destination_directory, destination_directory))
+            
+    test_files = glob((test_data + '/*.npy'))
+    print(test_files)
+    denoiser.test(test_files,model_weights_path, save_dir=destination_directory,
+                  stride=stride_size,patch_size=patch_size,height=height,width=width)
+
+
+
+def despeckle_from_crop(image_path,destination_directory,stride_size=64,
+                model_weights_path="merlin-sar/merlin/test/saved_model/model.pth",patch_size=256,height=256,width=256):
+    """ Description
+            ----------
+            Runs a test instance by calling the test function defined in model.py on a few samples
+
+            Parameters
+            ----------
+            denoiser : an object
+
+            Returns
+            ----------
+
+    """
+
     denoiser=Denoiser()
 
     if not os.path.exists(destination_directory+'\\processed_image'):
@@ -97,5 +143,5 @@ def despeckle_from_crop(image_path,destination_directory,stride_size=64,
 
     test_files = glob((test_data +'/test_image_data_cropped.npy'))
     print(test_files)
-    denoiser.test(model,test_files,model_weights_path, save_dir=destination_directory, dataset_dir=destination_directory,
-                  stride=stride_size)
+    denoiser.test(test_files,model_weights_path, save_dir=destination_directory,
+                  stride=stride_size,patch_size=patch_size,height=height,width=width)
