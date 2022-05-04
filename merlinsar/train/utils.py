@@ -6,7 +6,6 @@ import numpy as np
 from PIL import Image
 from scipy import special
 from scipy import signal
-import matplotlib.pyplot as plt
 from glob import glob
 from merlinsar.train.GenerateDataset import GenerateDataset
 
@@ -260,10 +259,6 @@ def save_real_imag_images_noisy(real_part, imag_part, imagename, save_dir):
     np.save(imagfilename, imag_part)
     store_data_and_plot(np.sqrt(2)*np.abs(imag_part), threshold, imagfilename)
 
-def save_residual(filepath, residual):
-    residual_image = np.squeeze(residual);
-    plt.imsave(filepath, residual_image)
-
 
 def cal_psnr(Shat, S):
     # takes amplitudes in input
@@ -274,14 +269,3 @@ def cal_psnr(Shat, S):
     return res
 
 
-# def tf_psnr(im1, im2):
-#     # assert pixel value range is 0-1
-#     mse = tf.losses.mean_squared_error(labels=im2 * 255.0, predictions=im1 * 255.0)
-#     return 10.0 * (tf.log(255.0 ** 2 / mse) / tf.log(10.0))
-
-"""def tf_psnr(Shat, S):
-    # takes intensities in input
-    S = tf.sqrt(S)
-    Shat = tf.sqrt(Shat)
-    mse = tf.losses.mean_squared_error(labels=S, predictions=Shat)
-    return 10.0 * (tf.log( tfp.stats.percentile(S, 99)/ mse) / tf.log(10.0))"""

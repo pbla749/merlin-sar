@@ -2,6 +2,7 @@ from merlinsar.test.utils import *
 from merlinsar.test.model import *
 import torch
 import numpy as np
+from tqdm import tqdm 
 
 M = 10.089038980848645
 m = -1.429329123112601
@@ -110,7 +111,7 @@ class Denoiser(object):
                 y_range = list(range(0, im_w - patch_size, stride))
                 if (y_range[-1] + patch_size) < im_w: y_range.extend(range(im_w - patch_size, im_w - patch_size + 1))
 
-            for x in x_range:
+            for x in tqdm(x_range):
                 for y in y_range:
                   
                     real_to_denoise, imag_to_denoise = symetrisation_patch_test(i_real_part[:, x:x + patch_size, y:y + patch_size, :],i_imag_part[:, x:x + patch_size, y:y + patch_size, :])

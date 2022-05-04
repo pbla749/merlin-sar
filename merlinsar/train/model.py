@@ -1,10 +1,7 @@
-import time
 import numpy as np
-import os
 
 from merlinsar.train.utils import *
 from scipy import special
-import argparse
 
 
 # DEFINE PARAMETERS OF SPECKLE AND NORMALIZATION FACTOR
@@ -304,3 +301,5 @@ class Model(torch.nn.Module):
       return output_clean_image
 
 
+    # def optimizer(self):
+    #   return torch.optim.Adam

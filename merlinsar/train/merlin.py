@@ -38,7 +38,7 @@ def save_model(model,destination_folder):
       torch.save(model.state_dict(),destination_folder+"/model.pth")
 
 
-def fit(model,train_loader,val_loader,epochs,lr_list,eval_files,eval_set,optimizer,clip_by_norm,sample_dir):
+def fit(model,train_loader,val_loader,epochs,lr_list,eval_files,eval_set,clip_by_norm,sample_dir):
   """ Fit the model according to the given evaluation data and parameters.
 
   Parameters
@@ -64,12 +64,12 @@ def fit(model,train_loader,val_loader,epochs,lr_list,eval_files,eval_set,optimiz
       epoch_num=epoch_num+1
       print("\nEpoch", epoch+1)
       print("***************** \n")
-      optimizer_ =optimizer(model.parameters(), lr=lr_list[epoch])
+      optimizer=torch.optim.Adam(model.parameters(), lr=lr_list[epoch])
 
       #Train
       for i, batch in enumerate(train_loader, 0):
 
-            optimizer_.zero_grad()
+            optimizer.zero_grad()
             loss = model.training_step(batch,i)
             train_losses.append(loss)
 
@@ -79,12 +79,11 @@ def fit(model,train_loader,val_loader,epochs,lr_list,eval_files,eval_set,optimiz
                   
               torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=5.0)
 
-            optimizer_.step()
+            optimizer.step()
 
             #running_loss += loss.item()     # extract the loss value
             print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, loss))
             # zero the loss
-
 
           # #Validate
       with torch.no_grad():
@@ -98,24 +97,24 @@ def fit(model,train_loader,val_loader,epochs,lr_list,eval_files,eval_set,optimiz
   return history
 
 
-def create_model(model_class,height=256,width=256,batch_size=12,val_batch_size=1,device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),from_pretrained=False):
+def create_model(height=256,width=256,batch_size=12,val_batch_size=1,device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),from_pretrained=False):
   """ Runs the denoiser algorithm for the training and evaluation dataset
 
 
   """
-  weights_path="C:/Users/ykemiche/OneDrive - Capgemini/Desktop/fork/merlin/merlin/train/saved_model/model.pth"
+  this_dir, this_filename = os.path.split(__file__)
+  weights_path = os.path.join(this_dir, "saved_model", "model.pth")
 
-  model = model_class(height,width,batch_size,val_batch_size,device)
+  model = Model(height,width,batch_size,val_batch_size,device)
   model.to(device)
   
   if from_pretrained == True:
         
     model.load_state_dict(torch.load(weights_path, map_location=torch.device('cpu')))
 
-
   return model
 
-def fit_model(model,lr_list,nb_epoch,training_set_directory,validation_set_directory,sample_directory,save_directory,patch_size=256,batch_size=12,val_batch_size=1,stride_size=128,n_data_augmentation=1,seed=2,optimizer=torch.optim.Adam,clip_by_norm=True):
+def fit_model(model,lr_list,nb_epoch,training_set_directory,validation_set_directory,sample_directory,save_directory,patch_size=256,batch_size=12,val_batch_size=1,stride_size=128,n_data_augmentation=1,seed=2,clip_by_norm=True):
   """ Runs the denoiser algorithm for the training and evaluation dataset
 
   Parameters
@@ -142,7 +141,7 @@ def fit_model(model,lr_list,nb_epoch,training_set_directory,validation_set_direc
 
   eval_files = glob(validation_set_directory+'/*.npy')
   # Train the model
-  history =fit(model,train_loader,eval_loader,nb_epoch,lr_list,eval_files,validation_set_directory,optimizer,clip_by_norm,sample_directory)
+  history =fit(model,train_loader,eval_loader,nb_epoch,lr_list,eval_files,validation_set_directory,clip_by_norm,sample_directory)
 
   # Save the model
   save_model(model,save_directory)

@@ -1,11 +1,9 @@
 import numpy as np
 from PIL import Image
-import scipy.ndimage
 from scipy import special
 from scipy import signal
 from merlinsar.test.load_cosar import cos2mat
 import cv2
-import PIL
 from PIL import Image
 import numpy as np
 from numpy import asarray
@@ -240,12 +238,6 @@ def save_real_imag_images_noisy(real_part, imag_part, imagename, save_dir):
     np.save(imagfilename, imag_part)
     store_data_and_plot(np.sqrt(2) * np.abs(imag_part), threshold, imagfilename)
 
-
-def save_residual(filepath, residual):
-    residual_image = np.squeeze(residual);
-    plt.imsave(filepath, residual_image)
-
-
 def cal_psnr(Shat, S):
     # takes amplitudes in input
     # Shat: a SAR amplitude image
@@ -255,7 +247,6 @@ def cal_psnr(Shat, S):
     return res
 
 def crop(image_png,image_data_real, image_data_imag,destination_directory,test_data, cropping):
-    print('cropping in  crop', cropping)
     # HERE I READ THE PNG FILE
     oriImage = image_png.copy()
     cropping = False
