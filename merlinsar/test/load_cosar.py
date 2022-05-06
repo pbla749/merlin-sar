@@ -1,7 +1,22 @@
 import struct
 import numpy as np
 
+
 def cos2mat(imgName):
+    """ A function for reading a CoSar file format and extracting from it the real and imaginary part in an array
+
+        Parameters
+        ----------
+        imgName : string
+        a path leading to the image in CoSar format
+
+        Returns
+        -------
+        a stacked nd.array containing both real and imaginary part of the provided image
+        cos2mat(imgName)[:,:,0] contains the real part of the image data
+        cos2mat(imgName)[:,:,1] contains the imaginary part of the image data
+
+    """
     print('Converting CoSAR to numpy array of size [ncolumns,nlines,2]')
 
     try:

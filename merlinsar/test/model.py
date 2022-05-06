@@ -6,7 +6,6 @@ from merlinsar.test.utils import *
 from scipy import special
 import argparse
 
-
 # DEFINE PARAMETERS OF SPECKLE AND NORMALIZATION FACTOR
 M = 10.089038980848645
 m = -1.429329123112601
@@ -18,18 +17,17 @@ import torch
 import numpy as np
 
 
-
-
 class Model(torch.nn.Module):
+    """ A class for defining our model and assigning methods if the script is in test mode .
+    """
 
-    def __init__(self,height,width,device):
+    def __init__(self, height, width, device):
         super().__init__()
 
-        self.device=device
+        self.device = device
 
         self.height = height
         self.width = width
-
 
         self.pool = torch.nn.MaxPool2d(kernel_size=2, stride=2)
         self.leaky = torch.nn.LeakyReLU(0.1)
@@ -74,28 +72,24 @@ class Model(torch.nn.Module):
 
         self.upscale2d = torch.nn.UpsamplingNearest2d(scale_factor=2)
 
+    def forward(self, x):
+        """ Defines a class for an autoencoder algorithm for an object (image) x. An autoencoder is a specific type
+            of feedforward neural networks where the input is the same as the output. It compresses the input into a
+            lower-dimensional code and then reconstruct the output from this representation. It is a common dimensionality
+            reduction algorithm
 
-    def forward(self,x):
-        """  Defines a class for an autoencoder algorithm for an object (image) x
+            Parameters
+            ----------
+            x : np.array
+            a numpy array describing the image to test
 
-        An autoencoder is a specific type of feedforward neural networks where the
-        input is the same as the
-        output. It compresses the input into a lower-dimensional code and then 
-        reconstruct the output from this representattion. It is a dimensionality 
-        reduction algorithm
-
-        Parameters
-        ----------
-        x : np.array
-        a numpy array containing image 
-
-        Returns
-        ----------
-        x-n : np.array
-        a numpy array containing the denoised image i.e the image itself minus the noise
+            Returns
+            ----------
+            x - n : np.array
+            a numpy array describing the denoised image i.e the image itself minus the speckle
 
         """
-        x=torch.reshape(x, [1, 1, self.height, self.width])
+        x = torch.reshape(x, [1, 1, self.height, self.width])
         skips = [x]
 
         n = x
@@ -121,7 +115,6 @@ class Model(torch.nn.Module):
         n = self.leaky(self.enc5(n))
         n = self.pool(n)
         n = self.leaky(self.enc6(n))
-
 
         # DECODER
         n = self.upscale2d(n)

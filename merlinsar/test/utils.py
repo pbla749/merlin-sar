@@ -8,7 +8,6 @@ from PIL import Image
 import numpy as np
 from numpy import asarray
 
-
 # DEFINE PARAMETERS OF SPECKLE AND NORMALIZATION FACTOR
 M = 10.089038980848645
 m = -1.429329123112601
@@ -18,9 +17,7 @@ cn = c / (M - m)  # normalized (0,1) mean of log speckle
 
 
 def normalize_sar(im):
-    """ Description
-            ----------
-            Normalization of a numpy-stored image
+    """ Normalization of a numpy-stored image
 
             Parameters
             ----------
@@ -28,26 +25,26 @@ def normalize_sar(im):
 
             Returns
             ----------
+            the normalised im
 
-        """
+    """
     if not isinstance(im, np.ndarray):
         raise TypeError('Please provide a .npy argument')
     return ((np.log(im + np.spacing(1)) - m) * 255 / (M - m)).astype('float32')
 
 
 def denormalize_sar(im):
-    """ Description
-            ----------
-            Denormalization of a numpy image
+    """ De-normalization of a numpy-stored image
 
-            Parameters
-            ----------
-            im : an image object
+                Parameters
+                ----------
+                im : an image object
 
-            Returns
-            ----------
+                Returns
+                ----------
+                the denormalised im
 
-        """
+    """
     if not isinstance(im, np.ndarray):
         raise TypeError('Please provide a .npy argument')
     return np.exp((M - m) * (np.squeeze(im)).astype('float32') + m)
@@ -111,9 +108,7 @@ def symetrisation_patch_test(real_part, imag_part):
 
 
 def load_sar_images(filelist):
-    """ Description
-            ----------
-            Loads files , resize them and append them into a list called data
+    """ Loads files , resize them and append them into a list called data
 
             Parameters
             ----------
@@ -123,7 +118,7 @@ def load_sar_images(filelist):
             ----------
             A list of images
 
-        """
+    """
     if not isinstance(filelist, list):
         im = np.load(filelist)
         return np.array(im).reshape(1, np.size(im, 0), np.size(im, 1), 2)
@@ -135,24 +130,21 @@ def load_sar_images(filelist):
 
 
 def store_data_and_plot(im, threshold, filename):
-    """ Description
-            ----------
-            Creates an image memory from an object exporting the array interface and returns a
-            converted copy of this image into greyscale mode ("L")
-
-            However, there is not plotting functions' call ?
+    """ Creates an image memory from an object exporting the array interface and returns a converted copy of this
+    image into greyscale mode ("L")
 
             Parameters
             ----------
             im : the image to store
-            threshold: clip a maximum value in the image array i.e values are to be between 0 and threshold
+            threshold: clip a maximum value in the image array i.e. values are to be between 0 and threshold
             filename: the path to store the result array image in .png
 
             Returns
             ----------
-            None
+            filename : string
+            the path leading to the saved object
 
-        """
+    """
     if not isinstance(im, np.ndarray):
         raise TypeError('Please provide a .npy argument')
     im = np.clip(im, 0, threshold)
@@ -162,7 +154,32 @@ def store_data_and_plot(im, threshold, filename):
     im.save(filename.replace('npy', 'png'))
     return filename
 
+
 def save_sar_images(denoised, noisy, imagename, save_dir, groundtruth=None):
+    """ Saves both denoised and noisy images in the save directory provided
+
+            Parameters
+            ----------
+            denoised: nd.array
+            the denoised image stored in an array
+
+            noisy: nd.array
+            the noisy image stored in an array
+
+            imagename: string
+            the name given to the image
+
+            save_dir: string
+            the path for saving results
+
+            groundtruth: bool
+            Special case if the user has groundtruth images. Results will be saved with 'groundtruth' in their names
+
+            Returns
+            ----------
+            None
+
+        """
     choices = {'marais1': 190.92, 'marais2': 168.49, 'saclay': 470.92, 'lely': 235.90, 'ramb': 167.22,
                'risoul': 306.94, 'limagne': 178.43, 'saintgervais': 560, 'Serreponcon': 450.0,
                'Sendai': 600.0, 'Paris': 1291.0, 'Berlin': 1036.0, 'Bergen': 553.71,
@@ -192,6 +209,27 @@ def save_sar_images(denoised, noisy, imagename, save_dir, groundtruth=None):
 
 
 def save_real_imag_images(real_part, imag_part, imagename, save_dir):
+    """ Saves denoised real and imaginary parts of images in the save directory provided
+
+            Parameters
+            ----------
+            real_part: nd.array
+            the real part of the image stored in an array
+
+            imag_part: nd.array
+            the imaginary part of the image stored in an array
+
+            imagename: string
+            the name given to the image
+
+            save_dir: string
+            the path for saving results
+
+            Returns
+            ----------
+            None
+
+    """
     choices = {'marais1': 190.92, 'marais2': 168.49, 'saclay': 470.92, 'lely': 235.90, 'ramb': 167.22,
                'risoul': 306.94, 'limagne': 178.43, 'saintgervais': 560, 'Serreponcon': 450.0,
                'Sendai': 600.0, 'Paris': 1291.0, 'Berlin': 1036.0, 'Bergen': 553.71,
@@ -202,9 +240,7 @@ def save_real_imag_images(real_part, imag_part, imagename, save_dir):
             threshold = choices.get(x)
     if threshold is None: threshold = np.mean(imag_part) + 3 * np.std(imag_part)
 
-    ####
     imagename = imagename.split('\\')[-1]
-    ####
 
     realfilename = save_dir + "/denoised_real_" + imagename
     np.save(realfilename, real_part)
@@ -216,6 +252,27 @@ def save_real_imag_images(real_part, imag_part, imagename, save_dir):
 
 
 def save_real_imag_images_noisy(real_part, imag_part, imagename, save_dir):
+    """ Saves noisy real and imaginary parts of images in the save directory provided
+
+            Parameters
+            ----------
+            real_part: nd.array
+            the real part of the image stored in an array
+
+            imag_part: nd.array
+            the imaginary part of the image stored in an array
+
+            imagename: string
+            the name given to the image
+
+            save_dir: string
+            the path for saving results
+
+            Returns
+            ----------
+            None
+
+    """
     choices = {'marais1': 190.92, 'marais2': 168.49, 'saclay': 470.92, 'lely': 235.90, 'ramb': 167.22,
                'risoul': 306.94, 'limagne': 178.43, 'saintgervais': 560, 'Serreponcon': 450.0,
                'Sendai': 600.0, 'Paris': 1291.0, 'Berlin': 1036.0, 'Bergen': 553.71,
@@ -238,6 +295,7 @@ def save_real_imag_images_noisy(real_part, imag_part, imagename, save_dir):
     np.save(imagfilename, imag_part)
     store_data_and_plot(np.sqrt(2) * np.abs(imag_part), threshold, imagfilename)
 
+
 def cal_psnr(Shat, S):
     # takes amplitudes in input
     # Shat: a SAR amplitude image
@@ -246,14 +304,45 @@ def cal_psnr(Shat, S):
     res = 10 * np.log10((P ** 2) / np.mean(np.abs(Shat - S) ** 2))
     return res
 
-def crop(image_png,image_data_real, image_data_imag,destination_directory,test_data, cropping):
+
+def crop_fixed(image_png, image_data_real, image_data_imag, destination_directory, test_data, cropping):
+    """ A crapping tool for despeckling only the selection of the user, made with OpenCV
+
+            Parameters
+            ----------
+            image_png: .png file
+            the image to be cropped in png format
+
+            image_data_real: nd.array
+            the real part of the image stored in an array
+
+            image_data_imag: nd.array
+            the imaginary part of the image stored in an array
+
+            destination_directory: string
+            the path for saving results in
+
+            test_data: string
+            the path for saving results in
+
+            cropping: bool
+            A boolean stating if the user wants to crop the image or not
+
+
+            Returns
+            ----------
+            None
+
+        """
     # HERE I READ THE PNG FILE
     oriImage = image_png.copy()
     cropping = False
     x_start, y_start, x_end, y_end = 0, 0, 0, 0
 
     # CV2 CROPPING IN WINDOW
-    def mouse_crop(event, x, y, flags, param):
+    def mouse_crop_fixed(event, x, y, flags, param):
+        """ The callback function of crop() to deal with user's events
+        """
         global x_start, y_start, x_end, y_end, cropping
         cropping = False
         if event == cv2.EVENT_LBUTTONDOWN:
@@ -276,22 +365,25 @@ def crop(image_png,image_data_real, image_data_imag,destination_directory,test_d
             refPoint = [(x_start, y_start), (x_end, y_end)]
 
             if len(refPoint) == 2:  # when two points were found
-                image_data_real_cropped = image_data_real[refPoint[0][1] * 8:refPoint[1][1] * 8, refPoint[0][0] * 8:refPoint[1][0] * 8]
-                image_data_imag_cropped = image_data_imag[refPoint[0][1] * 8:refPoint[1][1] * 8, refPoint[0][0] * 8:refPoint[1][0] * 8]
+                image_data_real_cropped = image_data_real[refPoint[0][1] * 8:refPoint[1][1] * 8,
+                                          refPoint[0][0] * 8:refPoint[1][0] * 8]
+                image_data_imag_cropped = image_data_imag[refPoint[0][1] * 8:refPoint[1][1] * 8,
+                                          refPoint[0][0] * 8:refPoint[1][0] * 8]
                 roi = oriImage[refPoint[0][1] * 8:refPoint[1][1] * 8, refPoint[0][0] * 8:refPoint[1][0] * 8]
                 roi = cv2.resize(roi, (256, 256))
-                cv2.imwrite(destination_directory+'\\cropped_npy_to_png.png', roi)
+                cv2.imwrite(destination_directory + '\\cropped_npy_to_png.png', roi)
                 cv2.imshow("Cropped", roi)
-                cropped_img_png = Image.open(destination_directory+'\\cropped_npy_to_png.png')
+                cropped_img_png = Image.open(destination_directory + '\\cropped_npy_to_png.png')
                 numpy_crop = asarray(cropped_img_png)
-                np.save(destination_directory+'\\cropped.npy', numpy_crop)
-                np.save(test_data+'\\image_data_real_cropped.npy', image_data_real_cropped)
+                np.save(destination_directory + '\\cropped.npy', numpy_crop)
+                np.save(test_data + '\\image_data_real_cropped.npy', image_data_real_cropped)
                 np.save(test_data + '\\image_data_imag_cropped.npy', image_data_imag_cropped)
 
-    h, w , c = image_png.shape
+    h, w, c = image_png.shape
+    # resizing image
     image = cv2.resize(image_png, (int(w / 8), int(h / 8)))
     cv2.namedWindow("image")
-    cv2.setMouseCallback("image", mouse_crop)
+    cv2.setMouseCallback("image", mouse_crop_fixed)
 
     while True:
         i = image.copy()
@@ -304,9 +396,125 @@ def crop(image_png,image_data_real, image_data_imag,destination_directory,test_d
 
         key = cv2.waitKey(10)
         if key == ord('q'):
+            cv2.destroyAllWindows()
             return
 
-def get_info_image(image_path,destination_directory):
+
+def crop(image_png, image_data_real, image_data_imag, destination_directory, test_data, cropping):
+    """ A crapping tool for despeckling only the selection of the user, made with OpenCV
+
+            Parameters
+            ----------
+            image_png: .png file
+            the image to be cropped in png format
+
+            image_data_real: nd.array
+            the real part of the image stored in an array
+
+            image_data_imag: nd.array
+            the imaginary part of the image stored in an array
+
+            destination_directory: string
+            the path for saving results in
+
+            test_data: string
+            the path for saving results in
+
+            cropping: bool
+            A boolean stating if the user wants to crop the image or not
+
+
+            Returns
+            ----------
+            None
+
+        """
+    # HERE I READ THE PNG FILE
+    oriImage = image_png.copy()
+    cropping = False
+    x_start, y_start, x_end, y_end = 0, 0, 0, 0
+
+    # CV2 CROPPING IN WINDOW
+    def mouse_crop(event, x, y, flags, param):
+        """ The callback function of crop() to deal with user's events
+        """
+        global x_start, y_start, x_end, y_end, cropping
+        cropping = False
+
+        if event == cv2.EVENT_LBUTTONDOWN:
+            x_start, y_start, x_end, y_end = x, y, x, y
+            cropping = True
+
+        # Mouse is Moving
+        elif event == cv2.EVENT_MOUSEMOVE:
+            cv2.rectangle(image, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
+            x_end, y_end = x, y
+            cropping = False
+
+
+        # if the left mouse button was released
+        elif event == cv2.EVENT_LBUTTONUP:
+            # record the ending (x, y) coordinates
+            x_end, y_end = x, y
+            cropping = False  # cropping is finished
+
+            refPoint = [(x_start, y_start), (x_end, y_end)]
+            print(refPoint)
+
+            if len(refPoint) == 2:  # when two points were found
+                image_data_real_cropped = image_data_real[refPoint[0][1] * 8:refPoint[1][1] * 8,
+                                          refPoint[0][0] * 8:refPoint[1][0] * 8]
+                image_data_imag_cropped = image_data_imag[refPoint[0][1] * 8:refPoint[1][1] * 8,
+                                          refPoint[0][0] * 8:refPoint[1][0] * 8]
+                roi = oriImage[refPoint[0][1] * 8:refPoint[1][1] * 8, refPoint[0][0] * 8:refPoint[1][0] * 8]
+                roi = cv2.resize(roi, (8 * (x_end - x_start), 8 * (y_end - y_start)))
+                cv2.imwrite(destination_directory + '\\cropped_npy_to_png.png', roi)
+                cv2.imshow("Cropped", roi)
+                cropped_img_png = Image.open(destination_directory + '\\cropped_npy_to_png.png')
+                numpy_crop = asarray(cropped_img_png)
+                np.save(destination_directory + '\\cropped.npy', numpy_crop)
+                np.save(test_data + '\\image_data_real_cropped.npy', image_data_real_cropped)
+                np.save(test_data + '\\image_data_imag_cropped.npy', image_data_imag_cropped)
+
+    h, w, c = image_png.shape
+    # resizing image
+    image = cv2.resize(image_png, (int(w / 8), int(h / 8)))
+    cv2.namedWindow("image")
+    cv2.setMouseCallback("image", mouse_crop)
+
+    while True:
+        i = image.copy()
+
+        if not cropping:
+            cv2.imshow("image", image)
+
+        elif cropping:
+            cv2.imshow("image", i)
+            #cv2.rectangle(i, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
+
+        key = cv2.waitKey(10)
+        if key == ord('q'):
+            cv2.destroyAllWindows()
+            return
+
+
+def get_info_image(image_path, destination_directory):
+    """ A function for retrieving informations on the CoSar stored image such as its png equivalent, its real and
+        imaginary part and the threshold to be applied later
+
+            Parameters
+            ----------
+            image_path: string
+            the path leading to image in CoSar format
+
+            destination_directory: string
+            the path for saving results in
+
+            Returns
+            ----------
+            None
+
+    """
     image_data = cos2mat(image_path)
 
     # GET THE TWO PARTS
@@ -322,4 +530,4 @@ def get_info_image(image_path,destination_directory):
     print('full picture in png is saved')
     image_png = cv2.imread(filename.replace('npy', 'png'))
     print('full picture in png has a dimension of {size}'.format(size=image_png.shape))
-    return image_png , image_data, image_data_real , image_data_imag, threshold, filename
+    return image_png, image_data, image_data_real, image_data_imag, threshold, filename

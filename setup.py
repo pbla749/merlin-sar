@@ -1,5 +1,5 @@
 
-   
+
 #!/usr/bin/env python
 
 """The setup script."""
@@ -46,7 +46,3 @@ setup(
     version='0.2.9',
     zip_safe=False,
 )
-
-
-
-
