@@ -215,13 +215,3 @@ def despeckle_from_crop(image_path, destination_directory, stride_size=64,
     print(test_files)
     denoiser.test(test_files, model_weights_path, save_dir=destination_directory,
                   stride=stride_size, patch_size=patch_size, height=height, width=width)
-
-
-image_path = "C:\\Users\\pblancha\\PycharmProjects\\test_merlin_package\\venv\\IMAGE_HH_SRA_spot_068.cos"
-destination_directory = "C:\\Users\\pblancha\\PycharmProjects\\test_merlin_package\\venv\\results"
-model_weights_path = "C:\\Users\\pblancha\\PycharmProjects\\test_merlin_package\\model.pth"
-
-despeckle_from_crop(image_path, destination_directory, stride_size=64,
-                    model_weights_path=model_weights_path, patch_size=256,
-                    height=256,
-                    width=256, fixed=False)
