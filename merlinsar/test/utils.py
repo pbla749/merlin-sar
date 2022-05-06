@@ -305,7 +305,7 @@ def cal_psnr(Shat, S):
     return res
 
 
-def crop_fixed(image_png, image_data_real, image_data_imag, destination_directory, test_data, cropping):
+def crop_fixed(image_png, image_data_real, image_data_imag, destination_directory, test_data):
     """ A crapping tool for despeckling only the selection of the user, made with OpenCV
 
             Parameters
@@ -351,10 +351,8 @@ def crop_fixed(image_png, image_data_real, image_data_imag, destination_director
 
         # Mouse is Moving
         elif event == cv2.EVENT_MOUSEMOVE:
-            cropping = True
-            if cropping:
-                cv2.rectangle(image, (x_start, y_start), (x_start + 32, y_start + 32), (255, 0, 0), 2)
-                x_end, y_end = x, y
+            cv2.rectangle(image, (x_start, y_start), (x_start + 32, y_start + 32), (255, 0, 0), 2)
+            x_end, y_end = x, y
 
         # if the left mouse button was released
         elif event == cv2.EVENT_LBUTTONUP:
@@ -400,7 +398,7 @@ def crop_fixed(image_png, image_data_real, image_data_imag, destination_director
             return
 
 
-def crop(image_png, image_data_real, image_data_imag, destination_directory, test_data, cropping):
+def crop(image_png, image_data_real, image_data_imag, destination_directory, test_data):
     """ A crapping tool for despeckling only the selection of the user, made with OpenCV
 
             Parameters
@@ -447,27 +445,27 @@ def crop(image_png, image_data_real, image_data_imag, destination_directory, tes
 
         # Mouse is Moving
         elif event == cv2.EVENT_MOUSEMOVE:
-            cv2.rectangle(image, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
             x_end, y_end = x, y
-            cropping = False
-
 
         # if the left mouse button was released
         elif event == cv2.EVENT_LBUTTONUP:
             # record the ending (x, y) coordinates
             x_end, y_end = x, y
-            cropping = False  # cropping is finished
+            # cropping is finished
+            cv2.rectangle(image, (x_start, y_start), (x, y), (255, 0, 0), 2)
+            cropping = False
 
             refPoint = [(x_start, y_start), (x_end, y_end)]
-            print(refPoint)
 
             if len(refPoint) == 2:  # when two points were found
                 image_data_real_cropped = image_data_real[refPoint[0][1] * 8:refPoint[1][1] * 8,
                                           refPoint[0][0] * 8:refPoint[1][0] * 8]
                 image_data_imag_cropped = image_data_imag[refPoint[0][1] * 8:refPoint[1][1] * 8,
                                           refPoint[0][0] * 8:refPoint[1][0] * 8]
+
                 roi = oriImage[refPoint[0][1] * 8:refPoint[1][1] * 8, refPoint[0][0] * 8:refPoint[1][0] * 8]
                 roi = cv2.resize(roi, (8 * (x_end - x_start), 8 * (y_end - y_start)))
+
                 cv2.imwrite(destination_directory + '\\cropped_npy_to_png.png', roi)
                 cv2.imshow("Cropped", roi)
                 cropped_img_png = Image.open(destination_directory + '\\cropped_npy_to_png.png')
@@ -490,7 +488,7 @@ def crop(image_png, image_data_real, image_data_imag, destination_directory, tes
 
         elif cropping:
             cv2.imshow("image", i)
-            #cv2.rectangle(i, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
+            cv2.rectangle(i, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
 
         key = cv2.waitKey(10)
         if key == ord('q'):

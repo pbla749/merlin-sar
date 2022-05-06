@@ -140,6 +140,7 @@ def despeckle_from_crop(image_path, destination_directory, stride_size=64,
                         model_weights_path=os.path.join(this_dir, "saved_model", "model.pth"), patch_size=256,
                         height=256,
                         width=256, fixed=True):
+    print('value ofd fixed in despeckle from crop', fixed)
     """ The despeckling function with an integrated cropping tool made with OpenCV.
     The ideal choice if you need to despeckle only a certain area of your high-res image. Results are saved in the
     directory provided in the 'destination directory'
@@ -188,11 +189,12 @@ def despeckle_from_crop(image_path, destination_directory, stride_size=64,
                                                                                                   destination_directory)
 
     # CROPPING OUR PNG AND REFLECT THE CROP ON REAL AND IMAG
-    cropping = False
     if fixed:
-        crop_fixed(image_png, image_data_real, image_data_imag, destination_directory, test_data, cropping)
+        print('FIXED')
+        crop_fixed(image_png, image_data_real, image_data_imag, destination_directory, test_data)
     else:
-        crop(image_png, image_data_real, image_data_imag, destination_directory, test_data, cropping)
+        print('FREE')
+        crop(image_png, image_data_real, image_data_imag, destination_directory, test_data)
 
     image_data_real_cropped = np.load(test_data + '\\image_data_real_cropped.npy')
     store_data_and_plot(image_data_real_cropped, threshold, test_data + '\\image_data_real_cropped.npy')
@@ -215,13 +217,3 @@ def despeckle_from_crop(image_path, destination_directory, stride_size=64,
     print(test_files)
     denoiser.test(test_files, model_weights_path, save_dir=destination_directory,
                   stride=stride_size, patch_size=patch_size, height=height, width=width)
-
-
-image_path = "C:\\Users\\pblancha\\PycharmProjects\\test_merlin_package\\venv\\IMAGE_HH_SRA_spot_068.cos"
-destination_directory = "C:\\Users\\pblancha\\PycharmProjects\\test_merlin_package\\venv\\results"
-model_weights_path = "C:\\Users\\pblancha\\PycharmProjects\\test_merlin_package\\model.pth"
-
-despeckle_from_crop(image_path, destination_directory, stride_size=64,
-                    model_weights_path=model_weights_path, patch_size=256,
-                    height=256,
-                    width=256, fixed=False)
